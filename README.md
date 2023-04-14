@@ -18,3 +18,5 @@ flask --app main run
 /fake[GET]--> generate fake data for database.
 ```
 
+Readme is not well written due to time constraint.
+
