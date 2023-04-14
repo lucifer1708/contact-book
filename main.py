@@ -5,7 +5,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+# app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -117,7 +117,7 @@ def get_contacts():
 
 @app.route('/contacts/<string:field>/<string:value>', methods=['PUT'])
 def update_contact(field, value):
-    # Get the contact with the specified field and value
+    # Get the contact with the specified field and value and edit it using JSON.
     if field == 'mobile':
         contact = Contact.query.filter_by(mobile_number=value).first()
     elif field == 'email':
