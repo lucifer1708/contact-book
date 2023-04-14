@@ -23,8 +23,8 @@ class Contact(db.Model):
     name = db.Column(db.String(50), unique=True, nullable=False)
     mobile_number = db.Column(db.String(80), unique=True, nullable=False)
     address = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    instagram_handle = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    instagram_handle = db.Column(db.String(50), unique=True, nullable=False)
     companies = db.relationship(
         'Company', secondary=contact_company_association, backref=db.backref('contacts', lazy=True))
 
