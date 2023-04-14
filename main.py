@@ -1,18 +1,17 @@
 from flask import Flask, jsonify, request
 from faker import Faker
 from models import db, Contact, Company
+import os
 
-# Flask
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '85c38682ec6f65b1b510a473baa02612'
-# app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
-
-print("hello")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+# Creating Database
 with app.app_context():
     # db.drop_all()
     db.create_all()
@@ -22,6 +21,7 @@ with app.app_context():
 
 @app.route('/create', methods=['POST'])
 def create_contact():
+    # Function to Create a contact.
     data = request.json
     name = data['name']
     mobile_number = data['mobile_number']
@@ -49,6 +49,7 @@ def create_contact():
 
 @app.route('/contacts', methods=['GET'])
 def get_contact_by_search_term():
+    # Function to get the contacts by searching using params.
     search_term = request.args.get('search')
     contact = Contact.query.filter_by(mobile_number=search_term).first()
     if not contact:
@@ -71,7 +72,8 @@ def get_contact_by_search_term():
 
 @app.route('/contacts/company')
 def get_contacts_by_company():
-    company_name = request.args.get('company_name')
+    # Function to get contact by company name by passing name in params
+    company_name = request.args.get('name')
     company = Company.query.filter_by(name=company_name).first()
 
     if company:
@@ -95,6 +97,7 @@ def get_contacts_by_company():
 
 @app.route('/', methods=['GET'])
 def get_contacts():
+    # Get All Contacts
     contacts = Contact.query.all()
     result = []
     for contact in contacts:
@@ -124,11 +127,9 @@ def update_contact(field, value):
     else:
         return jsonify({'message': 'Invalid field parameter'}), 400
 
-    # If the contact is not found, return 404 error
     if not contact:
         return jsonify({'message': 'Contact not found'}), 404
 
-    # Update the contact with the provided data
     data = request.get_json()
     contact.name = data['name']
     contact.mobile_number = data['mobile_number']
@@ -136,13 +137,11 @@ def update_contact(field, value):
     contact.instagram_handle = data['instagram_handle']
     contact.companies = []
 
-    # Add the companies to the contact
     company_names = data.get('companies', [])
     for company_name in company_names:
         company = Company.query.filter_by(name=company_name).first()
         if company:
             contact.companies.append(company)
-    # Commit the changes to the database
     db.session.commit()
     contact_dict = {
         'id': contact.id,
@@ -157,6 +156,7 @@ def update_contact(field, value):
 
 @app.route('/fake', methods=['GET'])
 def generate_fake():
+    # Generate fake  data and commit to database.
     for _ in range(100):
         fake = Faker()
         name = fake.name()
